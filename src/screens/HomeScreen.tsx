@@ -1,15 +1,15 @@
 import {
   ActivityIndicator,
   Image,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import React, {useEffect} from 'react';
-import {GetProducts} from '../hooks/productHooks';
 
-// import { GetProducts } from '../quarys/productQuery';
+import {GetProducts} from '../hooks/productHooks';
 
 const HomeScreen = () => {
   const {isLoading, data, isError}: any = GetProducts();
@@ -39,6 +39,17 @@ const HomeScreen = () => {
           <Text style={styles.productText}>price : {datas?.price}</Text>
           <Text style={styles.productText}>rating : {datas?.rating}</Text>
         </View>
+        <Pressable style={styles.addCartButtonStyle}>
+          <Text style={styles.addCartTextStyle}>Add Cart</Text>
+        </Pressable>
+      </View>
+    );
+  };
+
+  const BottomCartComponent = () => {
+    return (
+      <View style={styles.bottomStyles}>
+        <Text style={[styles.productText, {color: '#fff'}]}>Cart : 0</Text>
       </View>
     );
   };
@@ -46,12 +57,14 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       {isLoading && <LoadingComponent />}
-      <ScrollView>
-        {data &&
-          data?.products?.map((item: any, index: number) => (
+      {data?.products?.length > 0 && (
+        <ScrollView>
+          {data?.products?.map((item: any, index: number) => (
             <ProductComponent key={item?.title} datas={item} />
           ))}
-      </ScrollView>
+        </ScrollView>
+      )}
+      {!isLoading && <BottomCartComponent />}
     </View>
   );
 };
@@ -77,8 +90,34 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   productText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#000',
+  },
+  bottomStyles: {
+    height: 50,
+    width: '30%',
+    position: 'absolute',
+    backgroundColor: 'red',
+    bottom: 20,
+    borderRadius: 10,
+    right: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addCartButtonStyle: {
+    backgroundColor: 'blue',
+    // height: 30,
+    position: 'absolute',
+    right: 10,
+    top: 30,
+    borderRadius: 10,
+    justifyContent: 'center',
+    padding: 10,
+  },
+  addCartTextStyle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#fff',
   },
 });
