@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, {useEffect} from 'react';
 
-import {GetProducts} from '../hooks/productHooks';
+import {GetProducts, AddCartProduct} from '../hooks/productHooks';
 
 const HomeScreen = () => {
   const {isLoading, data, isError}: any = GetProducts();
@@ -39,7 +39,9 @@ const HomeScreen = () => {
           <Text style={styles.productText}>price : {datas?.price}</Text>
           <Text style={styles.productText}>rating : {datas?.rating}</Text>
         </View>
-        <Pressable style={styles.addCartButtonStyle}>
+        <Pressable
+          onPress={() => AddCartProduct(datas)}
+          style={styles.addCartButtonStyle}>
           <Text style={styles.addCartTextStyle}>Add Cart</Text>
         </Pressable>
       </View>
