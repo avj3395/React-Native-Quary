@@ -1,32 +1,9 @@
 import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
-import React, {useState} from 'react';
-import {useAddTodo} from '../../hooks/todoHooks';
-import {useFormik} from 'formik';
-import * as yup from 'yup';
+import React from 'react';
+import {useForm} from '../../hooks/todoHooks';
 
 const AddTodoForm = () => {
-  const [text, setText] = useState('');
-  const {mutate, isLoading, isError, error} = useAddTodo();
-
-  console.log('mutation======', isLoading, isError, error);
-
-  const validationSchema = yup.object({
-    name: yup.string().required('The name field is required.'),
-  });
-
-  const Formik = useFormik({
-    initialValues: {
-      name: '',
-    },
-    validationSchema,
-    onSubmit: values => {
-      console.log('formik data=====', values);
-      const payload = {
-        title: values?.name,
-      };
-      mutate(payload);
-    },
-  });
+  const {Formik, mutation}: any = useForm();
 
   return (
     <View style={styles.container}>
@@ -35,12 +12,22 @@ const AddTodoForm = () => {
         value={Formik?.values?.name}
         onChangeText={Formik?.handleChange('name')}
         onBlur={Formik?.handleBlur('name')}
+        placeholder="name"
       />
       {Formik.errors.name && Formik.touched.name && (
         <Text style={{color: 'red'}}>{Formik.errors.name}</Text>
       )}
+      <TextInput
+        style={styles.inputStyle}
+        value={Formik?.values?.email}
+        onChangeText={Formik?.handleChange('email')}
+        onBlur={Formik?.handleBlur('email')}
+        placeholder="email"
+      />
       <Pressable onPress={Formik?.handleSubmit} style={styles.buttonStyle}>
-        <Text style={styles.buttonLabelStyle}>Add +</Text>
+        <Text style={styles.buttonLabelStyle}>
+          {mutation.isLoading ? 'Loading...' : 'Add +'}
+        </Text>
       </Pressable>
     </View>
   );
@@ -60,6 +47,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     width: '100%',
     borderRadius: 10,
+    marginVertical: 10,
   },
   buttonStyle: {
     backgroundColor: 'blue',

@@ -5,8 +5,8 @@ export const fetchTodoListApi = async () => {
   console.log('fetchTodoListApi========');
   const api = await getAxiosInstance();
   try {
-    const response = await api.get('products');
-    return response?.data;
+    const response = await api.get('get-user');
+    return response?.data.data;
   } catch (error) {
     console.log(error);
   }
@@ -16,7 +16,7 @@ export const addTodoApi = async (data: any) => {
   console.log('addTodoApi========', data);
   const api = await getAxiosInstance();
   try {
-    const response = await api.post('products', data);
+    const response = await api.post('add-user', data);
     return response?.data;
   } catch (error) {
     console.log(error);

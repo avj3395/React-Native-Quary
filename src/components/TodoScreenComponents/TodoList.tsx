@@ -5,14 +5,17 @@ import {DeleteTodo, UpdateTodo} from '../../hooks/todoHooks';
 const TodoList = ({item}: any) => {
   return (
     <View style={styles.todoCard}>
-      <Text style={styles.todoText}>{item?.title}</Text>
+      <View>
+        <Text style={styles.todoText}>{item?.name}</Text>
+        <Text style={styles.todoText}>{item?.email}</Text>
+      </View>
       <View style={styles.actionStyle}>
         <Text
-          onPress={() => UpdateTodo(item?.id)}
+          onPress={() => UpdateTodo(item?._id)}
           style={[styles.deleteBtn, {color: '#d537ed'}]}>
           Update
         </Text>
-        <Text onPress={() => DeleteTodo(item?.id)} style={styles.deleteBtn}>
+        <Text onPress={() => DeleteTodo(item?._id)} style={styles.deleteBtn}>
           delete
         </Text>
       </View>
@@ -35,6 +38,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     flex: 1,
   },
   todoText: {

@@ -6,9 +6,9 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import {useRecoilState} from 'recoil';
-import {GetTodoList, todoListState} from '../hooks/todoHooks';
+import {GetTodoList, todoModalState} from '../hooks/todoHooks';
 import {useNavigation} from '@react-navigation/native';
 import AddButton from '../components/TodoScreenComponents/AddButton';
 import TodoList from '../components/TodoScreenComponents/TodoList';
@@ -17,8 +17,8 @@ import AddTodoForm from '../components/TodoScreenComponents/AddTodoForm';
 
 const TodoScreen = () => {
   const navigation = useNavigation();
+  const [isModalVisible, setIsModalVisible] = useRecoilState(todoModalState);
   const {isLoading, todoList, isError}: any = GetTodoList();
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -26,7 +26,7 @@ const TodoScreen = () => {
         <FlatList
           data={todoList}
           contentContainerStyle={{flexGrow: 1}}
-          keyExtractor={(item, index) => item?.id?.toString()}
+          keyExtractor={(item, index) => item?._id?.toString()}
           renderItem={({item, index}: any) => <TodoList item={item} />}
         />
       )}

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://fakestoreapi.com/';
+const BASE_URL = 'https://github-repos-todo-api.onrender.com/api/';
 
 export const getAxiosInstance = async () => {
   try {
