@@ -7,19 +7,20 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {useRecoilState} from 'recoil';
+import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil';
 import {GetTodoList} from '../hooks/todoHooks';
 import {useNavigation} from '@react-navigation/native';
 import AddButton from '../components/TodoScreenComponents/AddButton';
 import TodoList from '../components/TodoScreenComponents/TodoList';
 import CenterModal from '../components/ModalComponent/CenterModal';
 import AddTodoForm from '../components/TodoScreenComponents/AddTodoForm';
-import {todoModalState} from '../recoils/todoStates';
+import {todoModalState, todoUpdateState} from '../recoils/todoStates';
 import LoadingComponent from '../components/LoadingComponent/LoadingComponent';
 
 const TodoScreen = () => {
   const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useRecoilState(todoModalState);
+  const setUpdateUser = useSetRecoilState(todoUpdateState);
   const {isLoading, todoList, isError}: any = GetTodoList();
 
   return (
@@ -38,11 +39,19 @@ const TodoScreen = () => {
           renderItem={({item, index}: any) => <TodoList item={item} />}
         />
       )}
-      <AddButton openModal={setIsModalVisible} />
+      <AddButton
+        openModal={() => {
+          setIsModalVisible(true);
+          setUpdateUser(null);
+        }}
+      />
       {isModalVisible && (
         <CenterModal
           modalVisible={isModalVisible}
-          onClose={() => setIsModalVisible(false)}>
+          onClose={() => {
+            setIsModalVisible(false);
+            setUpdateUser(null);
+          }}>
           <AddTodoForm />
         </CenterModal>
       )}

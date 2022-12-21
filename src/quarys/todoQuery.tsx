@@ -1,8 +1,6 @@
 import {getAxiosInstance} from '../apis/api';
-import {useQuery, QueryClient} from '@tanstack/react-query';
 
 export const fetchTodoListApi = async () => {
-  console.log('fetchTodoListApi========');
   const api = await getAxiosInstance();
   try {
     const response = await api.get('get-user');
@@ -13,7 +11,6 @@ export const fetchTodoListApi = async () => {
 };
 
 export const addTodoApi = async (data: any) => {
-  console.log('addTodoApi========', data);
   const api = await getAxiosInstance();
   try {
     const response = await api.post('add-user', data);
@@ -24,10 +21,19 @@ export const addTodoApi = async (data: any) => {
 };
 
 export const deleteTodoApi = async (data: any) => {
-  console.log('deleteTodoApi========', data);
   const api = await getAxiosInstance();
   try {
     const response = await api.post('delete-user', data);
+    return response?.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateTodoApi = async (data: any) => {
+  const api = await getAxiosInstance();
+  try {
+    const response = await api.put('update-user', data);
     return response?.data;
   } catch (error) {
     console.log(error);

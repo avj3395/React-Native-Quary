@@ -1,9 +1,10 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {UpdateTodo, useDeleteTodo} from '../../hooks/todoHooks';
+import {useDeleteTodo, useUpdateTodo} from '../../hooks/todoHooks';
 
 const TodoList = ({item}: any) => {
   const {deleteTodo} = useDeleteTodo();
+  const {updateTodo} = useUpdateTodo();
   return (
     <View style={styles.todoCard}>
       <View>
@@ -12,7 +13,7 @@ const TodoList = ({item}: any) => {
       </View>
       <View style={styles.actionStyle}>
         <Text
-          onPress={() => UpdateTodo(item?._id)}
+          onPress={() => updateTodo(item)}
           style={[styles.deleteBtn, {color: '#d537ed'}]}>
           Update
         </Text>

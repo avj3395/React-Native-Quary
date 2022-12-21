@@ -1,14 +1,27 @@
-import {atom, useSetRecoilState} from 'recoil';
+import {atom, useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil';
 import React, {useState} from 'react';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
 
 import {useQuery, useQueryClient, useMutation} from '@tanstack/react-query';
-import {addTodoApi, deleteTodoApi, fetchTodoListApi} from '../quarys/todoQuery';
-import {todoModalState} from '../recoils/todoStates';
+import {
+  addTodoApi,
+  deleteTodoApi,
+  fetchTodoListApi,
+  updateTodoApi,
+} from '../quarys/todoQuery';
+import {todoModalState, todoUpdateState} from '../recoils/todoStates';
 
-export const UpdateTodo = (ID: any) => {
-  console.log('UpdateTodo======', ID);
+export const useUpdateTodo = () => {
+  const setUpdateUser = useSetRecoilState(todoUpdateState);
+  const setIsModalVisible = useSetRecoilState(todoModalState);
+
+  const updateTodo = (param: any) => {
+    setUpdateUser(param);
+    setIsModalVisible(true);
+  };
+
+  return {updateTodo};
 };
 
 export const useDeleteTodo = () => {
@@ -34,27 +47,13 @@ export const useDeleteTodo = () => {
     const payload = {
       id: ID,
     };
-
-    console.log('deleteTodo=======', payload, typeof ID);
     deleteMutation.mutate(payload);
   };
   return {deleteTodo};
 };
 
-// export const useAddTodo = (payload: any) => {
-// const queryClient = useQueryClient();
-// const mutation = useMutation(addTodoApi, {
-//   onSuccess: (data, variables, context) => {
-// refetch todo list
-// queryClient.invalidateQueries('get_todo');
-// console.log('useMutation=====onSuccess======', payload);
-// useTodoState().setIsModalVisible(false);
-//   },
-// });
-// mutation.mutate(payload);
-// };
-
 export const GetTodoList = () => {
+  //fetch todo list################################
   const {
     isError,
     isLoading,
@@ -66,8 +65,6 @@ export const GetTodoList = () => {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
-  // todoList?.reverse();
-  console.log('GetTodoList=======', isLoading, todoList);
 
   return {isLoading, todoList, isError};
 };
@@ -79,16 +76,51 @@ const validationSchema = yup.object({
 
 export const useForm = () => {
   const setIsModalVisible = useSetRecoilState(todoModalState);
+  const [updateUser, setUpdateUser] = useRecoilState(todoUpdateState);
   const queryClient = useQueryClient();
+  let updateData = {};
 
+  if (updateUser != null) {
+    updateData = {
+      name: updateUser?.name,
+      email: updateUser?.email,
+    };
+  }
+
+  //update user function###################################
+
+  const updateMutation = useMutation(updateTodoApi, {
+    onSuccess: (data, variables, context) => {
+      setIsModalVisible(false);
+      setUpdateUser(null);
+      queryClient.setQueriesData(['get_todo'], (oldData: any) => {
+        let tempData: any = [];
+        const updateData = {
+          _id: data?.data?.id,
+          name: data?.data?.name,
+          email: data?.data?.email,
+        };
+
+        oldData?.map((item: any, index: any) => {
+          if (item?._id != variables?.id) {
+            tempData.push(item);
+          } else {
+            tempData.push(updateData);
+          }
+        });
+
+        return tempData;
+      });
+    },
+  });
+
+  //#######################################################
+
+  //add user function######################################
   const addMutation = useMutation(addTodoApi, {
     onSuccess: (data, variables, context) => {
-      //refetch todo list
-      // queryClient.invalidateQueries(['get_todo']);
-      console.log('useMutation=====onSuccess======', data);
       setIsModalVisible(false);
       queryClient.setQueriesData(['get_todo'], (oldData: any) => {
-        console.log('oldData========', oldData);
         const newData = {
           _id: data?.data?.id,
           name: data?.data?.name,
@@ -98,22 +130,34 @@ export const useForm = () => {
       });
     },
   });
-
+  //#########################################################
   const Formik = useFormik({
-    initialValues: {
-      name: '',
-      email: '',
-    },
+    initialValues: updateUser
+      ? updateData
+      : {
+          name: '',
+          email: '',
+        },
     validationSchema,
+    enableReinitialize: true,
     onSubmit: async values => {
-      const payload = {
-        name: values?.name,
-        email: values?.email,
-      };
-      console.log('formik data=====', payload);
-      addMutation.mutate(payload);
+      let payload = {};
+      if (updateUser != null) {
+        payload = {
+          name: values?.name,
+          email: values?.email,
+          id: updateUser?._id,
+        };
+        updateMutation.mutate(payload);
+      } else {
+        payload = {
+          name: values?.name,
+          email: values?.email,
+        };
+        addMutation.mutate(payload);
+      }
     },
   });
 
-  return {Formik, addMutation};
+  return {Formik, addMutation, updateMutation};
 };

@@ -3,7 +3,7 @@ import React from 'react';
 import {useForm} from '../../hooks/todoHooks';
 
 const AddTodoForm = () => {
-  const {Formik, addMutation}: any = useForm();
+  const {Formik, addMutation, updateMutation}: any = useForm();
 
   return (
     <View style={styles.container}>
@@ -24,9 +24,14 @@ const AddTodoForm = () => {
         onBlur={Formik?.handleBlur('email')}
         placeholder="email"
       />
+      {Formik.errors.email && Formik.touched.email && (
+        <Text style={{color: 'red'}}>{Formik.errors.email}</Text>
+      )}
       <Pressable onPress={Formik?.handleSubmit} style={styles.buttonStyle}>
         <Text style={styles.buttonLabelStyle}>
-          {addMutation.isLoading ? 'Loading...' : 'Add +'}
+          {addMutation.isLoading || updateMutation.isLoading
+            ? 'Loading...'
+            : 'Add +'}
         </Text>
       </Pressable>
     </View>

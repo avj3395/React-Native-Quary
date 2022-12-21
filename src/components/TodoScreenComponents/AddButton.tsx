@@ -3,7 +3,7 @@ import React from 'react';
 
 const AddButton = ({openModal}: any) => {
   return (
-    <Pressable onPress={() => openModal(true)} style={styles.container}>
+    <Pressable onPress={() => openModal()} style={styles.container}>
       <Text style={styles.textStyle}>+</Text>
     </Pressable>
   );

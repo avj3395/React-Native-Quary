@@ -4,3 +4,8 @@ export const todoModalState = atom({
   key: 'todoModal',
   default: false,
 });
+
+export const todoUpdateState = atom({
+  key: 'todoUpdate',
+  default: null,
+});
