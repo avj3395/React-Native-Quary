@@ -3,7 +3,7 @@ import React from 'react';
 import {useForm} from '../../hooks/todoHooks';
 
 const AddTodoForm = () => {
-  const {Formik, mutation}: any = useForm();
+  const {Formik, addMutation}: any = useForm();
 
   return (
     <View style={styles.container}>
@@ -26,7 +26,7 @@ const AddTodoForm = () => {
       />
       <Pressable onPress={Formik?.handleSubmit} style={styles.buttonStyle}>
         <Text style={styles.buttonLabelStyle}>
-          {mutation.isLoading ? 'Loading...' : 'Add +'}
+          {addMutation.isLoading ? 'Loading...' : 'Add +'}
         </Text>
       </Pressable>
     </View>

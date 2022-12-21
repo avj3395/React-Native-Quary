@@ -22,3 +22,14 @@ export const addTodoApi = async (data: any) => {
     console.log(error);
   }
 };
+
+export const deleteTodoApi = async (data: any) => {
+  console.log('deleteTodoApi========', data);
+  const api = await getAxiosInstance();
+  try {
+    const response = await api.post('delete-user', data);
+    return response?.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
